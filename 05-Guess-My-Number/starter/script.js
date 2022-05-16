@@ -18,11 +18,12 @@ const numberToGuessElement = document.querySelector('.number');
 const scoreElement = document.querySelector('.score');
 const message = document.querySelector('.message');
 const guessElement = document.querySelector('.guess');
+const highScoreElement = document.querySelector('.highscore');
 
 let numberToGuess = Math.trunc(Math.random() * 20) + 1;
 let score = 20;
+let highScore = 0;
 
-numberToGuessElement.textContent = numberToGuess;
 scoreElement.textContent = score;
 
 const btnCheck = document.querySelector('.check');
@@ -36,13 +37,22 @@ const gameOver = function() {
 const youWin = function() {
   message.textContent = 'You win!!';
   btnCheck.disabled = true;
+  document.querySelector('body').style.backgroundColor = '#60b347';
+  numberToGuessElement.style.width = '30rem';
+  numberToGuessElement.textContent = numberToGuess;
+  if (score > highScore) {
+    highScore = score;
+    highScoreElement.textContent = highScore;
+  }
 };
 
-const newGame = function() {
+const playAgain = function() {
   message.textContent = 'Start guessing...';
   btnCheck.disabled = false;
+  document.querySelector('body').style.backgroundColor = '#222';
   numberToGuess = Math.trunc(Math.random() * 20) + 1;
-  numberToGuessElement.textContent = numberToGuess;
+  numberToGuessElement.style.width = '15rem';
+  numberToGuessElement.textContent = '?';
   score = 20;
   scoreElement.textContent = score;
   guessElement.value = '';
@@ -51,26 +61,29 @@ const newGame = function() {
 btnCheck.addEventListener('click', function() {
   const guess = Number(guessElement.value);
 
+  //when there is no input
   if (!guess) {
     message.textContent = 'Not a number!!';
+
+    //when palyer wins
   } else if (guess === numberToGuess) {
     youWin();
+
+    //when you fail a guess
   } else {
     message.textContent = 'Try another one';
     score--;
     scoreElement.textContent = score;
 
+    //when you lose (score is 0)
     if (score === 0) {
       gameOver();
-      return;
-    } else if (guess > numberToGuess) {
-      message.textContent = 'Too high';
     } else {
-      message.textContent = 'Too low';
+      message.textContent = guess > numberToGuess ? 'Too high' : 'Too low';
     }
   }
 });
 
 btnAgain.addEventListener('click', function() {
-  newGame();
+  playAgain();
 });
